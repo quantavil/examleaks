@@ -711,24 +711,6 @@
 					{/each}
 				</div>
 
-				<!-- Framing only. Every figure and every case-specific caveat is read
-				     from the rows above, so adding a death row never leaves this
-				     paragraph describing a set that no longer exists. -->
-				<div class="callout" style="margin-top:1.5rem;max-width:none">
-					<p>
-						<strong>Why these are not added together anywhere on this site.</strong> Each figure
-						above counts something different from the others. Some span a scandal that ran for
-						years rather than a single examination. Some count an accused organiser rather than a
-						candidate. Some are press tallies that no official finding has tied to the leak. Every
-						one is a real reported death, and every one has a different relationship to the
-						incident beside it, which is why each appears only next to its own caveat and never in
-						a total.
-					</p>
-					<p class="micro">
-						If you or someone you know is struggling: Tele-MANAS, India's national mental-health
-						helpline, is at <strong>14416</strong>, free and available 24×7.
-					</p>
-				</div>
 			</div>
 		</section>
 	{/if}
