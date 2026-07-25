@@ -1,0 +1,54 @@
+name: Report an error or add an outcome
+description: Fix a wrong row, or add a verdict to an existing case.
+title: '[Correction] '
+labels: ['correction']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Corrections are more valuable than additions**, and adding a court outcome to an old row is the single most useful thing you can do for this dataset.
+
+        Most rows were sourced from articles written days after the leak, so convictions handed down years later are missing across the board.
+
+  - type: input
+    id: incident_id
+    attributes:
+      label: Which row?
+      description: The incident ID, shown on every record page.
+      placeholder: PL-0093
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of correction?
+      options:
+        - A court outcome is missing (conviction, acquittal, quashed recruitment)
+        - A figure is wrong (arrests, convictions, candidates affected)
+        - The status is wrong (Confirmed / Alleged / Suspected / Denied)
+        - The date is wrong or falsely precise
+        - The summary misstates the source
+        - The source link is dead or paywalled
+        - Something else
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What does the row say, and what should it say?
+      placeholder: |
+        Currently: convictions is blank
+        Should be: 11 — special CBI court sentenced 11 to 7 years RI in May 2024
+    validations:
+      required: true
+
+  - type: input
+    id: source_url
+    attributes:
+      label: Source for the correction
+      description: We cannot act on a correction without one.
+      placeholder: https://…
+    validations:
+      required: true

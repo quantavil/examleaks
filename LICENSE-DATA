@@ -1,0 +1,30 @@
+# Data licence
+
+> The source code in this repository is licensed **GPL-3.0** (see `LICENSE`).
+> This file covers the **dataset**, which is licensed separately.
+
+`exam_leaks.csv` and everything derived from it (including the JSON export at
+`/data/exam-leaks.json`) is licensed under the
+
+**Creative Commons Attribution 4.0 International Licence (CC BY 4.0)**
+<https://creativecommons.org/licenses/by/4.0/>
+
+You are free to share and adapt the data for any purpose, including
+commercially, provided you give appropriate credit.
+
+## How to attribute
+
+> Exam Leaks — open record of Indian public examination leaks.
+> https://github.com/quantavil/examleaks — CC BY 4.0
+
+A link back is genuinely useful rather than merely polite: corrections happen
+continuously, and a link is how your readers reach the corrected version.
+
+## What this licence does NOT cover
+
+- **The linked articles.** Every row cites a news report, court order or
+  official notice. Those remain the copyright of their publishers. This
+  dataset licenses the *index*, not the sources it points at.
+- **Any implication of fact.** The data records what was publicly reported.
+  It is not a legal finding. An arrest is not a conviction, and several rows
+  record allegations that were later officially rejected.

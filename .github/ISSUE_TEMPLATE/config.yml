@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: How the record is built
+    url: https://examleaks.pages.dev/about
+    about: Inclusion criteria, the evidentiary scale, known biases and the column dictionary. Worth reading before you file.
+  - name: Edit the CSV directly
+    url: https://github.com/quantavil/examleaks/edit/main/exam_leaks.csv
+    about: Comfortable with the format? Add your row in the browser and GitHub opens the pull request for you.
