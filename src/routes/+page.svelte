@@ -94,7 +94,14 @@
 	const worstBody = $derived(bodyBuckets[0] ?? null);
 
 	const affectedParts = $derived(compactParts(t.affected));
-	const eras = $derived(byEra(filtered, LAST_DATE));
+
+	// The era panel exists to contrast the two base rates, so it must ignore the
+	// era and year facets — filtering to "NDA" would otherwise zero the UPA row
+	// and make the comparison meaningless. Every other facet still applies, so
+	// filtering to Rajasthan gives Rajasthan's own two-era comparison.
+	const eraBaseline = $derived(applyFilter(incidents, { ...filter, era: 'all', years: [] }));
+	const eras = $derived(byEra(eraBaseline, LAST_DATE));
+	const eraFacetIgnored = $derived(filter.era !== 'all' || filter.years.length > 0);
 	const biggest = $derived(topBy(filtered, (i) => i.affected, 6));
 	const deathCases = $derived(filtered.filter((i) => (i.deaths ?? 0) > 0));
 	const deathTotal = $derived(deathCases.reduce((s, i) => s + (i.deaths ?? 0), 0));
@@ -297,13 +304,30 @@
 							<div class="era-row">
 								<div>
 									<div class="era-label">{era.label}</div>
-									<div class="micro">{num(era.total)} incidents over {era.years.toFixed(1)} years</div>
+									<div class="micro">
+										{#if era.total === 0}
+											Nothing recorded in this period
+										{:else}
+											{num(era.total)}
+											{era.total === 1 ? 'incident' : 'incidents'} over {era.years.toFixed(1)} years
+										{/if}
+									</div>
 								</div>
 								<div class="era-rate tnum">
-									{era.perYear.toFixed(1)}<span class="micro">/yr</span>
+									{#if era.total === 0}
+										<span class="muted">—</span>
+									{:else}
+										{era.perYear.toFixed(1)}<span class="micro">/yr</span>
+									{/if}
 								</div>
 							</div>
 						{/each}
+						{#if eraFacetIgnored}
+							<p class="micro" style="margin-top:.7rem">
+								Ignores the period and year filters — otherwise one side is always zero and there is
+								nothing left to compare.
+							</p>
+						{/if}
 					</div>
 
 					<div class="callout">
