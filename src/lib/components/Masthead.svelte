@@ -3,11 +3,11 @@
 	import ThemeToggle from './ThemeToggle.svelte';
 
 	const NAV = [
-		{ href: '/', label: 'Dashboard', optional: false },
-		{ href: '/record', label: 'Record', optional: false },
-		{ href: '/states', label: 'States', optional: true },
-		{ href: '/about', label: 'Method', optional: true },
-		{ href: '/contribute', label: 'Contribute', optional: false }
+		{ href: '/', label: 'Dashboard' },
+		{ href: '/record', label: 'Record' },
+		{ href: '/states', label: 'States' },
+		{ href: '/about', label: 'Method' },
+		{ href: '/contribute', label: 'Contribute' }
 	];
 
 	const isCurrent = (href: string): boolean =>
@@ -21,16 +21,19 @@
 			<span class="tagline">India · open record</span>
 		</a>
 
+		<!-- The toggle sits outside the nav so that on narrow screens the nav can
+		     drop to a full-width second row while the toggle stays on the first,
+		     beside the wordmark. Nothing is hidden at any width. -->
 		<nav aria-label="Primary">
 			{#each NAV as item (item.href)}
 				<a
 					class="navlink"
-					class:is-optional={item.optional}
 					href={item.href}
 					aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a
 				>
 			{/each}
-			<ThemeToggle />
 		</nav>
+
+		<ThemeToggle />
 	</div>
 </header>

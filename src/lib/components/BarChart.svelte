@@ -28,23 +28,46 @@
 
 	const GAP = 2; // surface gap between stacked segments
 	const PAD_RIGHT = 8;
+	const LABEL_H = 16; // the stacked label line, narrow layout only
+	const CHAR_W = 5.6; // ≈ average mixed-case advance of the 11.5px .cat-label
 
 	let width = $state(0);
 	let hover = $state<number | null>(null);
 	let tipW = $state(190);
 	let tipH = $state(90);
 
-	const pitch = $derived(rowHeight + rowGap);
+	/**
+	 * Under 520px a label gutter wide enough for "Rajasthan Police Recruitment
+	 * Board" would leave almost nothing for the bar, and SVG text neither wraps
+	 * nor clips — it simply ran off the left of the card and was cut off by the
+	 * page. On narrow screens each label goes on its own line above its bar,
+	 * with the full width to itself.
+	 */
+	const narrow = $derived(width > 0 && width < 520);
+
+	const pitch = $derived(rowHeight + rowGap + (narrow ? LABEL_H : 0));
 	const height = $derived(Math.max(pitch, data.length * pitch));
-	const labelW = $derived(Math.round(Math.max(84, Math.min(width * 0.34, 172))));
+	const labelW = $derived(narrow ? 0 : Math.round(Math.max(84, Math.min(width * 0.34, 172))));
 	const valueW = $derived(data.length ? 52 : 0);
 	const innerW = $derived(Math.max(24, width - labelW - valueW - PAD_RIGHT));
 	const maxTotal = $derived(
 		maxOverride ?? data.reduce((m, d) => Math.max(m, d.total), 0) ?? 0
 	);
 
+	// Belt and braces for the wide layout too: a body name longer than the
+	// gutter is trimmed rather than allowed to bleed past the card edge. The
+	// untruncated name stays in the tooltip and the accessible name. This is a
+	// width estimate, not a measurement, so it is set to trip only on names
+	// that clearly do not fit — the stacked layout has a whole line to itself.
+	const maxChars = $derived(Math.max(8, Math.floor((narrow ? width - 4 : labelW - 12) / CHAR_W)));
+	const clip = (text: string): string =>
+		text.length > maxChars ? `${text.slice(0, maxChars - 1).trimEnd()}…` : text;
+
+	// Half a pixel in, so the hairline axis is not clipped at the left edge.
+	const axisX = $derived(labelW + (narrow ? 0.5 : 0));
+
 	const x = (v: number): number => (maxTotal > 0 ? (v / maxTotal) * innerW : 0);
-	const rowY = (i: number): number => i * pitch;
+	const rowY = (i: number): number => i * pitch + (narrow ? LABEL_H : 0);
 
 	const hasSelection = $derived(selected.size > 0);
 
@@ -109,33 +132,41 @@
 >
 	{#if width > 0}
 		<svg {height} viewBox="0 0 {width} {height}" role="img" aria-label={ariaLabel}>
-			<line class="baseline" x1={labelW} x2={labelW} y1={0} y2={height} />
+			<line class="baseline" x1={axisX} x2={axisX} y1={0} y2={height} />
 
 			{#each data as row, i (row.key)}
 				{@const dim = hasSelection && !selected.has(row.key) && hover !== i}
+				{@const labelX = narrow ? 0 : labelW - 10}
+				{@const labelY = narrow ? -6 : rowHeight / 2}
 				<g transform="translate(0,{rowY(i)})" class="mark" class:is-dim={dim}>
 					{#if hover === i}
-						<rect class="hover-wash" x={0} y={-rowGap / 2} width={width} height={pitch} />
+						<rect
+							class="hover-wash"
+							x={0}
+							y={-(rowGap / 2) - (narrow ? LABEL_H : 0)}
+							width={width}
+							height={pitch}
+						/>
 					{/if}
 
 					{#if row.href}
 						<a href={row.href} aria-label="Open {row.label}">
 							<text
 								class="cat-label"
-								x={labelW - 10}
-								y={rowHeight / 2}
-								text-anchor="end"
-								dominant-baseline="middle"
-								style="text-decoration:underline;text-underline-offset:2px">{row.label}</text
+								x={labelX}
+								y={labelY}
+								text-anchor={narrow ? 'start' : 'end'}
+								dominant-baseline={narrow ? 'auto' : 'middle'}
+								style="text-decoration:underline;text-underline-offset:2px">{clip(row.label)}</text
 							>
 						</a>
 					{:else}
 						<text
 							class="cat-label"
-							x={labelW - 10}
-							y={rowHeight / 2}
-							text-anchor="end"
-							dominant-baseline="middle">{row.label}</text
+							x={labelX}
+							y={labelY}
+							text-anchor={narrow ? 'start' : 'end'}
+							dominant-baseline={narrow ? 'auto' : 'middle'}>{clip(row.label)}</text
 						>
 					{/if}
 
@@ -157,7 +188,7 @@
 					<rect
 						class="hit"
 						x={0}
-						y={rowY(i) - rowGap / 2}
+						y={rowY(i) - rowGap / 2 - (narrow ? LABEL_H : 0)}
 						width={width}
 						height={pitch}
 						role="button"
@@ -181,7 +212,7 @@
 					<rect
 						class="hit"
 						x={0}
-						y={rowY(i) - rowGap / 2}
+						y={rowY(i) - rowGap / 2 - (narrow ? LABEL_H : 0)}
 						width={width}
 						height={pitch}
 						aria-hidden="true"

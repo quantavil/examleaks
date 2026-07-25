@@ -123,6 +123,27 @@ bun run check      # must be 0 errors AND 0 warnings (types + a11y)
   `<path>.html` → `404.html`).
 - Prerendered pages must not touch `url.searchParams` during SSR. `/record` reads
   them inside a `$effect`, which never runs on the server.
+- **The masthead never hides a nav link.** Below 760px the nav drops to its own
+  full-width second row. `display:none` on "optional" links used to make States
+  and Method unreachable on every phone, and the row still overflowed 320px by
+  125px, pushing the theme toggle off-screen.
+- **`--masthead-h` is the single source of the sticky header's height.**
+  `scroll-padding-top` and `.records thead th`'s `top` both read it, because the
+  masthead is 3.5rem on desktop and 5.25rem once the nav wraps.
+- **No `text-rendering: optimizeLegibility` and no `-webkit-font-smoothing`.**
+  Both are deliberately absent. `optimizeLegibility` shifts Gecko's font
+  fallback and is what made the type look wrong on Firefox for Android;
+  `antialiased` is Blink/WebKit-only, so it thinned the serif in Chrome and
+  left Firefox heavier. `text-size-adjust` must stay set **unprefixed** — Gecko
+  ignores the `-webkit-` form and applies its own font inflation without it.
+- **`BarChart` flips layout under 520px**: labels move above their bars instead
+  of into a left gutter. SVG text neither wraps nor clips, so long names — the
+  conducting bodies especially — used to run off the side of the page. The
+  `CHAR_W` truncation is an estimate and a safety net, not a measurement; it
+  should only ever trip on names that clearly do not fit.
+- **`ColumnChart` drops the regular tick before the final one** when they would
+  collide. On a phone 2024 and 2026 sit 24px apart and printed on top of each
+  other.
 
 ## Deployment
 

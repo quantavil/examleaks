@@ -50,6 +50,25 @@
 		Math.max(1, Math.ceil(data.length / Math.max(1, Math.floor(innerW / 40))))
 	);
 
+	/**
+	 * Ticks at a fixed interval, plus the final category so the axis always
+	 * states where the series ends. If that last one lands too close to the
+	 * regular tick before it — which it does on a phone, where 2024 and 2026
+	 * are 24px apart and the labels are wider than that — the regular tick
+	 * gives way rather than the two printing on top of each other.
+	 */
+	const labelIndices = $derived.by(() => {
+		const last = data.length - 1;
+		if (last < 0) return new Set<number>();
+
+		const out = new Set<number>();
+		for (let i = 0; i < last; i += labelEvery) {
+			if (last - i >= labelEvery) out.add(i);
+		}
+		out.add(last);
+		return out;
+	});
+
 	const hasSelection = $derived(selected.size > 0);
 
 	const bandRects = $derived(
@@ -179,7 +198,7 @@
 			/>
 
 			{#each data as col, i (col.key)}
-				{#if i % labelEvery === 0 || i === data.length - 1}
+				{#if labelIndices.has(i)}
 					<text
 						class="tick-label"
 						x={PAD.left + i * step + step / 2}

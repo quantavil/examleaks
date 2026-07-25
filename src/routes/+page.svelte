@@ -177,8 +177,11 @@
 	<section class="wrap" style="padding-block:clamp(2.5rem,7vw,5rem) 0">
 		<p class="kicker">Open record · {MIN_YEAR}–{MAX_YEAR}</p>
 
+		<!-- The forced break is a wide-screen composition. On a phone "When the
+		     paper" already wraps on its own, and the extra break left a stranded
+		     third line, so below 560px `text-wrap: balance` is left to it. -->
 		<h1 class="display" style="margin-top:1.1rem">
-			When the paper<br />gets out.
+			When the paper <br class="br-wide" />gets out.
 		</h1>
 
 		<div class="hero-grid">
