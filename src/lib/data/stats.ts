@@ -23,6 +23,16 @@ const sumOf = (list: Incident[], pick: (i: Incident) => number | null): number =
 const countRecorded = (list: Incident[], pick: (i: Incident) => number | null): number =>
 	list.reduce((acc, i) => acc + (pick(i) === null ? 0 : 1), 0);
 
+/**
+ * The spread of the death figures, which is the only honest way to describe
+ * them collectively. There is deliberately no `sumOf` equivalent.
+ */
+const deathsRangeOf = (list: Incident[]): { min: number; max: number } | null => {
+	const values = list.map((i) => i.deaths ?? 0).filter((n) => n > 0);
+	if (values.length === 0) return null;
+	return { min: Math.min(...values), max: Math.max(...values) };
+};
+
 /* ------------------------------------------------------------------ years */
 
 export interface YearBucket {
@@ -174,14 +184,24 @@ export interface EraBucket {
 }
 
 /**
- * Era spans are not equal, so the comparison is reported per year as well as
- * in absolute terms. UPA covers 2004 → May 2014, NDA May 2014 → the latest
- * record in the dataset.
+ * The one genuinely fixed date on the site: the May 2014 change of government
+ * that the `era` column encodes. It is a fact about the world rather than
+ * about the dataset, so it is a constant. Everything else here is derived, and
+ * the validator rejects any row whose `era` disagrees with its own date.
  */
-export function byEra(list: Incident[], lastDate: string): EraBucket[] {
-	const split = new Date('2014-05-26').getTime();
-	const start = new Date('2004-01-01').getTime();
-	const end = new Date(lastDate || '2026-01-01').getTime();
+export const ERA_SPLIT = '2014-05-26';
+export const ERA_SPLIT_YEAR = Number(ERA_SPLIT.slice(0, 4));
+
+/**
+ * Era spans are not equal, so the comparison is reported per year as well as
+ * in absolute terms. The window runs from the first record in the dataset to
+ * the last, so adding an earlier incident lengthens the first era rather than
+ * silently shortening its rate.
+ */
+export function byEra(list: Incident[], lastDate: string, firstDate = ''): EraBucket[] {
+	const split = new Date(ERA_SPLIT).getTime();
+	const start = new Date(firstDate || `${ERA_SPLIT_YEAR - 10}-01-01`).getTime();
+	const end = new Date(lastDate || ERA_SPLIT).getTime();
 	const YEAR_MS = 365.2425 * 24 * 3600 * 1000;
 
 	const spans: Record<EraKey, number> = {
@@ -189,11 +209,19 @@ export function byEra(list: Incident[], lastDate: string): EraBucket[] {
 		nda: Math.max(0.5, (end - split) / YEAR_MS)
 	};
 
+	const splitLabel = new Date(ERA_SPLIT).toLocaleDateString('en-GB', {
+		month: 'long',
+		year: 'numeric'
+	});
+
 	return (['upa', 'nda'] as EraKey[]).map((key) => {
 		const subset = list.filter((i) => i.eraKey === key);
 		return {
 			key,
-			label: key === 'upa' ? 'UPA (2004 – May 2014)' : 'NDA (May 2014 – present)',
+			label:
+				key === 'upa'
+					? `UPA (to ${splitLabel})`
+					: `NDA (${splitLabel} onwards)`,
 			total: subset.length,
 			years: spans[key],
 			perYear: subset.length / spans[key],
@@ -218,8 +246,18 @@ export interface Totals {
 	convictionsRecorded: number;
 	/** Incidents where at least one conviction is recorded. */
 	withConviction: number;
-	deaths: number;
+
+	/**
+	 * Deliberately a count of rows and a range, never a sum.
+	 *
+	 * `linked_deaths` is the one column that must not be aggregated: the
+	 * figures measure different things, so a total of them is arithmetically
+	 * correct and substantively false. A summed `deaths` field used to sit
+	 * here unused, which is a loaded gun in a shared API. Removing it means
+	 * the wrong number cannot be reached for by accident.
+	 */
 	deathsRecorded: number;
+	deathsRange: { min: number; max: number } | null;
 
 	cancelled: number;
 	retest: number;
@@ -250,8 +288,8 @@ export function totals(list: Incident[]): Totals {
 		convictions: sumOf(list, (i) => i.convictions),
 		convictionsRecorded: countRecorded(list, (i) => i.convictions),
 		withConviction: list.filter((i) => (i.convictions ?? 0) > 0).length,
-		deaths: sumOf(list, (i) => i.deaths),
 		deathsRecorded: countRecorded(list, (i) => i.deaths),
+		deathsRange: deathsRangeOf(list),
 
 		cancelled: list.filter((i) => has(i, 'cancelled')).length,
 		retest: list.filter((i) => has(i, 'retest')).length,

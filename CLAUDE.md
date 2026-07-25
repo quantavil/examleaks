@@ -28,35 +28,77 @@ There is **no database and no generated file**. A contributor edits one CSV row
 and opens a PR; the next build regenerates the entire site from it.
 
 **Everything on the site is data-derived. There are no hardcoded counts in any
-rendered page** — verified by grep. If you write a number into prose, compute it.
-`README.md` and `CONTRIBUTING.md` are the only places with literal figures, and
-they are docs, not pages.
+rendered page.** If you write a number into prose, compute it. `README.md` and
+`CONTRIBUTING.md` are the only places with literal figures, and they are docs,
+not pages.
+
+The rule extends past counts to **any claim about a specific row**. Editorial
+prose used to name its own examples — "the 23 deaths beside Vyapam", "the UP
+Police recruitment accounts for 48 lakh" — which is true until the row changes
+and then silently false. Numbers and enumerations are derived; a named example
+is only acceptable where it is illustrating an argument that survives the row
+being edited. The one deliberate constant is `ERA_SPLIT` in `stats.ts`, the May
+2014 change of government, which is a fact about the world rather than the data.
 
 Adding one CSV row automatically produces: a `/incident/PL-XXXX` page, an SVG
 share card, a row in `/record`, a bar in every chart, an entry on the relevant
 `/state/…` and `/year/…` pages, a sitemap entry, and a line in the JSON export.
 Removing a row removes all of it. Do not add manual steps to that pipeline.
 
+## The validator
+
+`scripts/validate-csv.ts` runs inside `vite build`, so a malformed row fails the
+Cloudflare Pages build before review. This is the whole review gate — there is
+no CI. `bun run validate` runs it standalone; `bun run validate:links` also
+fetches every source.
+
+It exists because `normalize.ts` is deliberately forgiving: it coerces anything
+it does not recognise so one odd row can never blank the site. That is right at
+render time and wrong at review time. Before the validator, a row reading
+`leak_status: "Definitely Leaked"` was silently filed as **Alleged** — an
+evidentiary claim nobody made — and shipped into every chart.
+
+Errors fail the build: unknown enum values, a date that is not a real calendar
+date, an `era` disagreeing with its own date, a `YYYY-01-01` date not declaring
+`date_precision: year`, a death figure with no `deaths_note`, an area matching
+no known place, an `action_taken` clause the parser would silently drop.
+Warnings do not fail: shared sources, id gaps, a genuine 1st-of-month date.
+
+**Link rot is not checked at build time** and must not be — builds have to work
+offline. `bun run validate:links` is the pre-merge check, and it is the one
+that catches the worst possible row: a well-formed URL pointing at nothing.
+
 ## Editorial rules — non-negotiable
 
 These look like missing features. They are deliberate. Do not "fix" them.
 
-- **`linked_deaths` is excluded from every aggregate.** The four figures measure
-  different things: Vyapam's 23 span a decade-long scam with foul play ruled out
-  by the CBI; RAS 2013's 1 is the accused mastermind, not a candidate; both NEET
-  figures are contested press tallies. Each renders only beside its own caveat.
+- **`linked_deaths` is excluded from every aggregate, and is never summed.** The
+  figures measure different things: one spans a scam that ran for years rather
+  than one exam, one is an accused organiser rather than a candidate, others are
+  contested press tallies. Each renders only beside its own `deaths_note`.
   Summing them is arithmetically correct and substantively false.
-- **`Denied` rows stay in the dataset.** Deleting disproved scandals (UGC-NET
-  2024, Rajasthan Patwari 2021) would silently inflate the confirmed count.
+  `totals()` deliberately exposes `deathsRecorded` and `deathsRange` and **no
+  `deaths` sum** — a summed field used to sit there unused, which is a loaded
+  gun in a shared API. Do not add one back. The deaths prose is framing only and
+  names no row: it used to enumerate "Vyapam's 23, RAS's 1, the NEET figures",
+  which silently went stale the moment a second NEET death row was added.
+- **`Denied` rows stay in the dataset.** Deleting a disproved scandal would
+  silently inflate the confirmed count. Prose must never name which rows those
+  are: the dashboard spent months asserting a Patwari case was marked `Denied`
+  when the row said `Alleged`. The accountability callout reads its examples
+  from the `Denied` rows themselves.
 - **Blank never renders as `0`.** An empty `arrests` cell means the source did
   not say. A literal `0` appears only where a source reported none.
 - **No named individuals.** Institutions, counts and outcomes only. An arrest is
   not a conviction.
 - **Recency and language bias are stated on the page**, not just in the docs.
   The upward trend is partly an artefact of what is findable in English.
-- **Date precision is honoured.** Rows whose note says "Jan placeholder" or "day
-  approximate" render as `≈ 2012`, never a fabricated exact day. The heuristic
-  lives in `datePrecisionFrom()` in `normalize.ts`.
+- **Date precision is honoured, and declared rather than guessed.** The
+  `date_precision` column (`day | month | year`) drives it; anything but `day`
+  renders as `≈ 2012`. This was a regex over the note's prose until it was found
+  to be quietly failing on three rows whose caveat was phrased in words the
+  pattern did not anticipate, so the site was printing an invented exact day.
+  Never reintroduce inference here — the validator enforces the column instead.
 
 The reasoning is written up at `/about` and in `CONTRIBUTING.md`.
 

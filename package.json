@@ -9,7 +9,9 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "validate": "bun run scripts/validate-csv.ts",
+    "validate:links": "bun run scripts/validate-csv.ts --links",
+    "check": "bun run scripts/validate-csv.ts && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "prepare": "svelte-kit sync"
   },
@@ -17,6 +19,7 @@
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.70.1",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@types/node": "^26.1.1",
     "svelte": "^5.56.8",
     "svelte-check": "^4.7.3",
     "typescript": "^5.9.3",

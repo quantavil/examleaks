@@ -32,6 +32,15 @@ const ACTION_RULES: { re: RegExp; kind: ActionKind }[] = [
 	{ re: /^none/i, kind: 'none' }
 ];
 
+/**
+ * Whether one `+`-separated clause of `action_taken` is understood. An
+ * unrecognised clause is dropped silently, so the validator uses this to
+ * refuse a row whose outcome would go missing from the record.
+ */
+export function isKnownActionClause(clause: string): boolean {
+	return ACTION_RULES.some((r) => r.re.test(clause.trim()));
+}
+
 function parseActions(raw: string): IncidentAction[] {
 	if (!raw) return [];
 	const seen = new Set<ActionKind>();
@@ -63,26 +72,20 @@ function parseActions(raw: string): IncidentAction[] {
 }
 
 /**
- * Roughly a third of the rows carry a placeholder day or month, and the note
- * column says so in prose. Reading that back means the site can render
- * "≈ 2012" instead of implying a precision the source never had.
+ * Roughly a fifth of the rows carry a placeholder day or month, so the site
+ * renders "≈ 2012" instead of implying a precision the source never had.
+ *
+ * This is read from the `date_precision` column, not inferred. It used to be
+ * regex-matched out of the note's prose, which quietly failed whenever a
+ * contributor phrased the caveat in words the pattern did not anticipate:
+ * three rows were rendering an invented exact day. The validator rejects an
+ * unrecognised value, so a typo here fails the build rather than silently
+ * promoting a placeholder to a real date.
  */
-function datePrecisionFrom(note: string): DatePrecision {
-	const n = note.toLowerCase();
-	if (
-		/only year of exam known|year of exam known|year-only date|exam-year date approximate|placeholder used|jan placeholder|year only/.test(
-			n
-		)
-	) {
-		return 'year';
-	}
-	if (
-		/day approximate|day unknown|1st of month used|month approximate|day set to 01|day is approximate|days? approximate/.test(
-			n
-		)
-	) {
-		return 'month';
-	}
+function datePrecisionFrom(raw: string): DatePrecision {
+	const v = raw.trim().toLowerCase();
+	if (v === 'year') return 'year';
+	if (v === 'month') return 'month';
 	return 'day';
 }
 
@@ -134,7 +137,7 @@ export function normalizeIncident(row: Record<string, string>): Incident {
 		date,
 		year,
 		month: Number.isFinite(month) ? month : 1,
-		datePrecision: datePrecisionFrom(note),
+		datePrecision: datePrecisionFrom(toText(row.date_precision)),
 		era,
 		eraKey,
 		eraLabel: ERA_LABELS[eraKey],

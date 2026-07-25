@@ -42,7 +42,7 @@ Full column dictionary: [`/about#schema`](https://examleaks.pages.dev/about#sche
   - `Alleged` — a credible public allegation with an FIR, arrests or a probe, but no established finding.
   - `Suspected` — authorities acted pre-emptively (postponement, withheld results) on suspicion.
   - `Denied` — investigated and officially rejected, or the "leaked" paper turned out to be fake. **These rows stay in the file.**
-- **Say so when the date is fuzzy.** If the source gives only a year, use `YYYY-01-01` and write "Only year of exam known, Jan placeholder." in the note. The site parses that sentence and renders the date as `≈ YYYY` rather than implying a precision nobody established. Same for "day approximate" and "1st of month used".
+- **Say so when the date is fuzzy.** Set `date_precision` to `day`, `month` or `year`. If the source gives only a year, use `YYYY-01-01` with `date_precision: year`; if only a month, use the 1st with `date_precision: month`. The site then renders `≈ YYYY` or `≈ Jun YYYY` instead of implying a precision nobody established. This is a column, not a sentence in the note: the build rejects a `YYYY-01-01` date that does not declare `year`, so a placeholder can never quietly become a real date.
 - **Any death figure needs its caveat.** `linked_deaths` may never be filled in without a `deaths_note` explaining whose deaths, how contested the link is, and what the number does not mean. These figures are excluded from every aggregate on the site.
 - **Use the next free ID** — sequential, zero-padded, never reused.
 - **Quoting.** Free text containing commas must be wrapped in double quotes; a literal quote inside a quoted field is doubled (`""`).
@@ -52,16 +52,19 @@ Full column dictionary: [`/about#schema`](https://examleaks.pages.dev/about#sche
 One row (wrapped here for readability — a single line in the file):
 
 ```
-PL-0111,2026-08-14,NDA (May2014-now),Example State Clerk Recruitment Exam 2026,
+PL-0111,2026-08-14,day,NDA (May2014-now),Example State Clerk Recruitment Exam 2026,
 Example Staff Selection Commission (ESSC),State,Example State (Capital City),Confirmed,
 Exam cancelled + Arrests-FIR,"Question paper circulated on Telegram 40 minutes before the
-shift began; the board cancelled that shift the same evening and police arrested 4. Day
-known.",4,,52000,,,The Example Herald,https://example.com/article,High
+shift began; the board cancelled that shift the same evening and police arrested 4.",4,,
+52000,,,The Example Herald,https://example.com/article,High
 ```
+
+Run `bun run validate` before you open the pull request. It checks the same
+things the build checks, and it is much faster than waiting for a preview.
 
 ## What happens to your pull request
 
-1. The Cloudflare Pages preview build parses the CSV and rebuilds the site — a malformed row fails immediately, before anyone reviews it.
+1. The Cloudflare Pages preview build validates the CSV and rebuilds the site. A malformed row fails the build immediately, before anyone reviews it: unknown status or confidence values, a date that is not a real calendar date, an `era` that disagrees with its own date, a death figure with no `deaths_note`, an area matching no known state, and an `action_taken` clause the site would silently drop are all build errors.
 2. A maintainer opens your source and checks it says what the row says. **Rows are rejected for overstating the source far more often than for anything else.**
 3. Once merged, your incident gets a permanent page at `/incident/PL-XXXX`, a share card, and a place in every chart and download.
 

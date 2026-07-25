@@ -12,7 +12,8 @@
 
 	const SCHEMA: { field: string; type: string; note: string }[] = [
 		{ field: 'incident_id', type: 'string', note: 'Stable identifier, PL-0001 upward. Never reused, never renumbered.' },
-		{ field: 'date', type: 'ISO date', note: 'The examination or leak date. Where the source gives only a month or year, the day is a placeholder and the note says so.' },
+		{ field: 'date', type: 'ISO date', note: 'The examination or leak date. Where the source gives only a month or year, the day is a placeholder and date_precision says so.' },
+		{ field: 'date_precision', type: 'day | month | year', note: 'How much of the date the source actually establishes. Anything but “day” renders as ≈ rather than implying a precision nobody reported.' },
 		{ field: 'era', type: 'enum', note: 'Governing coalition at the time. Derived from the date; kept in the file for convenience.' },
 		{ field: 'exam_name', type: 'string', note: 'The examination as named in the source, including the year.' },
 		{ field: 'conducting_body', type: 'string', note: 'The authority that ran the examination, with its acronym where one exists.' },
@@ -166,21 +167,30 @@
 			<h3>Dates are often approximate</h3>
 			<p>
 				Where a source establishes only the year or the month, the CSV stores a placeholder day and
-				says so in the note. The site reads that note back and renders those dates as
+				declares it in <code>date_precision</code>. Those dates render as
 				<code>≈ 2012</code> or <code>≈ Jun 2012</code> rather than inventing a precise day.
 				{approxDated} of the {incidents.length} rows are dated this way.
 			</p>
 
 			<h2>On deaths</h2>
 			<p>
-				{deathRows} entries carry a <code>linked_deaths</code> figure, and they are deliberately excluded
-				from every summary statistic on this site. The reason is that summing them would produce a number
-				that is arithmetically correct and substantively false: the 23 deaths beside the Vyapam entry
-				span a decade-long scam rather than one examination and were investigated with foul play
-				ruled out in every case the CBI examined; the single death beside RAS 2013 is the accused
-				mastermind, not a candidate; and the NEET figures are press tallies that conflate
-				leak-specific distress with India's much older and broader problem of examination-pressure
-				suicide. Each figure appears only next to its own caveat.
+				{deathRows}
+				{deathRows === 1 ? 'entry carries' : 'entries carry'} a <code>linked_deaths</code> figure, and
+				they are deliberately excluded from every summary statistic on this site.
+			</p>
+			<p>
+				The reason is that the figures do not measure the same thing as one another. One counts
+				deaths across a scam that ran for years rather than deaths at a single examination. One is
+				an accused organiser rather than a candidate. Others are press tallies that no official
+				finding has tied to the leak, and that conflate leak-specific distress with India's much
+				older and broader problem of examination-pressure suicide. Adding them together would
+				produce a number that is arithmetically correct and substantively false.
+			</p>
+			<p>
+				So no total is offered anywhere. <code>deaths_note</code> is mandatory whenever
+				<code>linked_deaths</code> is filled in, and each figure renders only beside its own caveat,
+				in that row's own words. If you want to know what a number means, the note is the answer,
+				not the arithmetic.
 			</p>
 
 			<h2>On named individuals</h2>

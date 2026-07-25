@@ -102,6 +102,7 @@
 		const head = [
 			'incident_id',
 			'date',
+			'date_precision',
 			'exam_name',
 			'conducting_body',
 			'body_type',
@@ -120,6 +121,7 @@
 		const rows = sorted.map((i) => [
 			i.id,
 			i.date,
+			i.datePrecision,
 			i.examName,
 			i.conductingBody,
 			i.bodyType,

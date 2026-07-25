@@ -9,7 +9,7 @@
 	import Seo from '$lib/components/Seo.svelte';
 
 	import { FIRST_DATE, LAST_DATE, MAX_YEAR, MIN_YEAR, YEARS, byId, incidents } from '$lib/data';
-	import { byBody, byEra, byPlace, byYear, countByStatus, topBy, totals } from '$lib/data/stats';
+	import { ERA_SPLIT_YEAR, byBody, byEra, byPlace, byYear, countByStatus, topBy, totals } from '$lib/data/stats';
 	import { STATUSES, STATUS_ORDER } from '$lib/data/types';
 	import type { Incident } from '$lib/data/types';
 	import { applyFilter, emptyFilter, isActive, recordHref, toggle } from '$lib/filters';
@@ -63,9 +63,11 @@
 		}))
 	);
 
+	// Anchored to the data, not to literal years: adding a pre-2004 incident
+	// would otherwise leave the first band starting in the wrong place.
 	const eraBands = $derived([
-		{ from: '2004', to: '2013', label: 'UPA' },
-		{ from: '2014', to: String(MAX_YEAR), label: 'NDA' }
+		{ from: String(MIN_YEAR), to: String(ERA_SPLIT_YEAR - 1), label: 'UPA' },
+		{ from: String(ERA_SPLIT_YEAR), to: String(MAX_YEAR), label: 'NDA' }
 	]);
 
 	const placeBuckets = $derived(byPlace(filtered));
@@ -100,11 +102,32 @@
 	// and make the comparison meaningless. Every other facet still applies, so
 	// filtering to Rajasthan gives Rajasthan's own two-era comparison.
 	const eraBaseline = $derived(applyFilter(incidents, { ...filter, era: 'all', years: [] }));
-	const eras = $derived(byEra(eraBaseline, LAST_DATE));
+	const eras = $derived(byEra(eraBaseline, LAST_DATE, FIRST_DATE));
 	const eraFacetIgnored = $derived(filter.era !== 'all' || filter.years.length > 0);
 	const biggest = $derived(topBy(filtered, (i) => i.affected, 6));
+	// The scale chart's caveat names its own outlier rather than hardcoding one.
+	// Most exam names already carry their year, so only add it when they do not.
+	const largestAffected = $derived(biggest[0] ?? null);
+	const outlierLabel = $derived(
+		!largestAffected
+			? ''
+			: largestAffected.examName.includes(String(largestAffected.year))
+				? largestAffected.examName
+				: `${largestAffected.examName} (${largestAffected.year})`
+	);
+	// The accountability callout names its own examples rather than hardcoding them.
+	const deniedCases = $derived(filtered.filter((i) => i.status === 'Denied'));
+	const deniedList = $derived.by(() => {
+		const names = deniedCases.slice(0, 3).map((i) => i.examName);
+		const rest = deniedCases.length - names.length;
+		const parts = rest > 0 ? [...names, `${rest} more`] : names;
+		if (parts.length === 1) return parts[0];
+		return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+	});
+
 	const deathCases = $derived(filtered.filter((i) => (i.deaths ?? 0) > 0));
-	const deathTotal = $derived(deathCases.reduce((s, i) => s + (i.deaths ?? 0), 0));
+	// The spread, never the sum. See the note on `deathsRange` in stats.ts.
+	const deathsSpread = $derived(totals(deathCases).deathsRange);
 
 	/* --------------------------------------------------- cross-filters */
 
@@ -526,7 +549,9 @@
 			<Figure
 				title="Candidates affected per year"
 				subtitle="Summed across incidents where a source gives a figure. Blank years are years with no reported figure, not years with no incident."
-				note="This is deliberately a separate chart from the incident counts — the two measures share no axis and must not be read against one another. A single 2024 entry, the UP Police constable recruitment, accounts for 48 lakh candidates on its own."
+					note="This is deliberately a separate chart from the incident counts. The two measures share no axis and must not be read against one another.{largestAffected
+						? ` One entry alone, ${outlierLabel}, accounts for ${compactShort(largestAffected.affected)} candidates, ${pctStr(largestAffected.affected ?? 0, t.affected)} of the total plotted here.`
+						: ''}"
 				table={{
 					head: ['Year', 'Candidates affected', 'Incidents reporting a figure'],
 					rows: yearBuckets
@@ -621,14 +646,25 @@
 						</dl>
 					</div>
 
+					<!-- The examples are read from the Denied rows themselves. Naming
+					     them by hand went stale: this paragraph spent months telling
+					     readers a Patwari case was marked Denied when the row said
+					     Alleged. Prose must not assert what a row's fields say. -->
 					<div class="callout">
 						<p>
-							<strong>An arrest is not a conviction.</strong> Several entries here ended with the
-							allegation officially rejected — the UGC-NET 2024 cancellation was closed by the CBI
-							after the “leaked” screenshot proved to be doctored by a student, and Rajasthan's 2021
-							Patwari case turned on a fake paper sold to candidates. Those rows are marked
-							<em>Denied</em>, and they stay in the record because a retracted scandal is part of
-							the story too.
+							<strong>An arrest is not a conviction.</strong>
+							{#if deniedCases.length > 0}
+								{deniedCases.length}
+								{deniedCases.length === 1 ? 'entry' : 'entries'} in the record ended with the
+								allegation officially investigated and rejected, or with the “leaked” paper turning
+								out to be fake: {deniedList}. Those rows are marked <em>Denied</em>, and they stay
+								in the record because deleting a retracted scandal would quietly inflate the
+								confirmed count.
+							{:else}
+								No entry in the current selection was officially rejected, but several elsewhere in
+								the record were. Those rows are marked <em>Denied</em> and stay in it, because
+								deleting a retracted scandal would quietly inflate the confirmed count.
+							{/if}
 						</p>
 					</div>
 				</div>
@@ -643,10 +679,16 @@
 				<div class="section-head">
 					<p class="num">06 — Deaths</p>
 					<h2>The deaths reported alongside these scandals, with their caveats intact.</h2>
+					<!-- Counts entries and gives the spread. It must not state a total:
+					     the figures measure different things, and this paragraph sits
+					     directly above the callout explaining why they are never summed. -->
 					<p class="dek">
-						{deathTotal} deaths appear in {deathCases.length} entries. They are deliberately kept out
-						of the summary figures at the top of this page, because the number does not mean what a
-						headline would make it mean.
+						{deathCases.length}
+						{deathCases.length === 1 ? 'entry carries' : 'entries carry'} a reported death figure{deathsSpread
+							? `, ranging from ${num(deathsSpread.min)} to ${num(deathsSpread.max)}`
+							: ''}. They are deliberately kept out of the summary figures at the top of this page,
+						and they are never added to one another, because the numbers do not mean what a single
+						headline figure would make them mean.
 					</p>
 				</div>
 
@@ -669,16 +711,18 @@
 					{/each}
 				</div>
 
+				<!-- Framing only. Every figure and every case-specific caveat is read
+				     from the rows above, so adding a death row never leaves this
+				     paragraph describing a set that no longer exists. -->
 				<div class="callout" style="margin-top:1.5rem;max-width:none">
 					<p>
-						<strong>Why these are not added together anywhere on this site.</strong> The 23 deaths
-						attached to the Vyapam entry span an entire decade-long scam, not one examination, and
-						the CBI ruled out foul play in every case it examined. The single death in the RAS 2013
-						entry is the accused mastermind, not a candidate. The NEET figures are press tallies
-						that mix leak-specific distress with the broader, older phenomenon of exam-pressure
-						suicide in India. Each of these is a real reported death and each has a different
-						relationship to the leak beside it. Summing them would produce a number that is
-						technically arithmetic and substantively false.
+						<strong>Why these are not added together anywhere on this site.</strong> Each figure
+						above counts something different from the others. Some span a scandal that ran for
+						years rather than a single examination. Some count an accused organiser rather than a
+						candidate. Some are press tallies that no official finding has tied to the leak. Every
+						one is a real reported death, and every one has a different relationship to the
+						incident beside it, which is why each appears only next to its own caveat and never in
+						a total.
 					</p>
 					<p class="micro">
 						If you or someone you know is struggling: Tele-MANAS, India's national mental-health
