@@ -11,7 +11,9 @@
 		shown,
 		total,
 		placeLabels = {},
-		bodyLabels = {}
+		bodyLabels = {},
+		recordHref,
+		showSearch = true
 	}: {
 		/** A $state proxy owned by the page — mutations here flow back up. */
 		filter: Filter;
@@ -20,6 +22,9 @@
 		total: number;
 		placeLabels?: Record<string, string>;
 		bodyLabels?: Record<string, string>;
+		/** When set, renders the hand-off to the record with this selection. */
+		recordHref?: string;
+		showSearch?: boolean;
 	} = $props();
 
 	const BODY_TYPES: { key: Filter['bodyType']; label: string }[] = [
@@ -57,17 +62,19 @@
 
 <div class="filter-bar" id="filters">
 	<div class="fb-row">
-		<div class="field" style="flex:1 1 15rem;max-width:24rem">
-			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-				<circle cx="11" cy="11" r="7" /><path d="M20 20l-3.6-3.6" />
-			</svg>
-			<input
-				type="search"
-				placeholder="Search exams, bodies, states, notes…"
-				aria-label="Search the record"
-				bind:value={filter.query}
-			/>
-		</div>
+		{#if showSearch}
+			<div class="field" style="flex:1 1 15rem;max-width:24rem">
+				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+					<circle cx="11" cy="11" r="7" /><path d="M20 20l-3.6-3.6" />
+				</svg>
+				<input
+					type="search"
+					placeholder="Search exams, bodies, states, notes…"
+					aria-label="Search the record"
+					bind:value={filter.query}
+				/>
+			</div>
+		{/if}
 
 		<p class="fb-count ui">
 			<strong class="tnum">{num(shown)}</strong>
@@ -76,6 +83,13 @@
 
 		{#if active}
 			<button class="btn btn-sm" onclick={() => resetFilter(filter)}>Clear all filters</button>
+		{/if}
+
+		{#if recordHref}
+			<a class="btn btn-sm btn-primary" href={recordHref}>
+				See {active ? `these ${num(shown)}` : 'all'}
+				{shown === 1 ? 'incident' : 'incidents'} →
+			</a>
 		{/if}
 	</div>
 

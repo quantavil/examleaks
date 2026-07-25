@@ -14,13 +14,13 @@
 			<h2 style="margin-top:.7rem">{heading}</h2>
 			<p>{blurb}</p>
 			<div class="row" style="margin-top:1.5rem;gap:.6rem">
-				<a class="btn btn-accent" href={LINKS.newIncident} rel="noopener noreferrer" target="_blank">
+				<a class="btn btn-accent" href={LINKS.newIncident}>
 					Submit a leak
 				</a>
-				<a class="btn" href={LINKS.editCsv} rel="noopener noreferrer" target="_blank">
+				<a class="btn" href={LINKS.editCsv}>
 					Edit the CSV
 				</a>
-				<a class="btn" href={LINKS.correction} rel="noopener noreferrer" target="_blank">
+				<a class="btn" href={LINKS.correction}>
 					Report an error
 				</a>
 			</div>

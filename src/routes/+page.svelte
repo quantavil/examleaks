@@ -4,7 +4,6 @@
 	import Figure from '$lib/components/Figure.svelte';
 	import FilterBar from '$lib/components/FilterBar.svelte';
 	import IncidentDrawer from '$lib/components/IncidentDrawer.svelte';
-	import IncidentTable from '$lib/components/IncidentTable.svelte';
 	import KpiTile from '$lib/components/KpiTile.svelte';
 	import Meter from '$lib/components/Meter.svelte';
 	import Seo from '$lib/components/Seo.svelte';
@@ -13,7 +12,7 @@
 	import { byBody, byEra, byPlace, byYear, countByStatus, topBy, totals } from '$lib/data/stats';
 	import { STATUSES, STATUS_ORDER } from '$lib/data/types';
 	import type { Incident } from '$lib/data/types';
-	import { applyFilter, emptyFilter, isActive, toggle } from '$lib/filters';
+	import { applyFilter, emptyFilter, isActive, recordHref, toggle } from '$lib/filters';
 	import { compact, compactParts, compactShort, fmtDate, num, pctStr } from '$lib/format';
 	import { LINKS, SITE_DESCRIPTION, SITE_NAME, SITE_URL, abs } from '$lib/site';
 
@@ -208,6 +207,7 @@
 			total={incidents.length}
 			placeLabels={PLACE_LABELS}
 			bodyLabels={BODY_LABELS}
+			recordHref={recordHref(filter)}
 		/>
 	</div>
 
@@ -662,19 +662,54 @@
 		</section>
 	{/if}
 
-	<!-- ========================================================== record -->
+	<!-- ========================================================== hand-off -->
 	<section class="section" id="record">
 		<div class="wrap">
-			<div class="section-head">
-				<p class="num">07 — The record</p>
-				<h2>Every incident, every source.</h2>
-				<p class="dek">
-					Sort any column. Select a row for the full account and the link it was drawn from. The
-					filters above apply here too.
-				</p>
-			</div>
+			<div class="handoff">
+				<div>
+					<p class="num">07 — The record</p>
+					<h2 style="margin-top:.6rem">
+						{isActive(filter) ? 'Read the incidents behind this selection.' : 'Read the record itself.'}
+					</h2>
+					<p class="dek" style="margin-top:.85rem">
+						{#if isActive(filter)}
+							The filters above narrow the record to
+							<strong style="color:var(--ink)">{num(filtered.length)}</strong>
+							{filtered.length === 1 ? 'incident' : 'incidents'}. They carry across, so the table
+							opens on exactly this selection — and the link is shareable.
+						{:else}
+							All {num(incidents.length)} incidents in one searchable, sortable table. Every row opens
+							the full account and the report it was drawn from.
+						{/if}
+					</p>
+					<div class="row" style="margin-top:1.5rem;gap:.6rem">
+						<a class="btn btn-primary" href={recordHref(filter)}>
+							{isActive(filter)
+								? `See these ${num(filtered.length)} ${filtered.length === 1 ? 'incident' : 'incidents'}`
+								: `Search all ${num(incidents.length)} incidents`} →
+						</a>
+						<a class="btn" href="/states">Browse by state</a>
+						<a class="btn" href="/years">Browse by year</a>
+					</div>
+				</div>
 
-			<IncidentTable list={filtered} onselect={openIncident} />
+				<ul class="handoff-preview">
+					<!-- Newest first, matching the record table's default sort. -->
+					{#each filtered.slice(-5).reverse() as incident (incident.id)}
+						<li>
+							<a href="/incident/{incident.id}">
+								<span class="hp-date tnum">{fmtDate(incident.date, incident.datePrecision)}</span>
+								<span class="hp-title">{incident.examName}</span>
+							</a>
+						</li>
+					{/each}
+					{#if filtered.length > 5}
+						<li class="hp-more">
+							<a href={recordHref(filter)}>+{num(filtered.length - 5)} more →</a>
+						</li>
+					{/if}
+				</ul>
+			</div>
 		</div>
 	</section>
 </main>
@@ -868,6 +903,71 @@
 
 	.split-bar > div:last-child {
 		border-radius: 0 2px 2px 0;
+	}
+
+	/* Hand-off to the record */
+	.handoff {
+		display: grid;
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+		gap: clamp(1.5rem, 4vw, 3.5rem);
+		align-items: start;
+	}
+
+	@media (max-width: 820px) {
+		.handoff {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	.handoff .num {
+		font-family: var(--font-sans);
+		font-size: 0.6875rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		color: var(--ink-3);
+	}
+
+	.handoff-preview {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		border-top: 1px solid var(--rule);
+	}
+
+	.handoff-preview li {
+		border-bottom: 1px solid var(--rule);
+	}
+
+	.handoff-preview a {
+		display: grid;
+		grid-template-columns: 5.5rem minmax(0, 1fr);
+		gap: 0.75rem;
+		align-items: baseline;
+		padding: 0.6rem 0;
+		text-decoration: none;
+		font-family: var(--font-sans);
+		font-size: 0.82rem;
+	}
+
+	.handoff-preview .hp-date {
+		font-size: 0.72rem;
+		color: var(--ink-3);
+		white-space: nowrap;
+	}
+
+	.handoff-preview .hp-title {
+		font-weight: 600;
+		line-height: 1.35;
+	}
+
+	.handoff-preview a:hover .hp-title {
+		color: var(--accent);
+	}
+
+	.handoff-preview .hp-more a {
+		grid-template-columns: minmax(0, 1fr);
+		font-weight: 700;
+		color: var(--accent);
 	}
 
 	/* Deaths */

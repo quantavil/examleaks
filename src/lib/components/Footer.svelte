@@ -11,6 +11,7 @@
 				<h4>The record</h4>
 				<ul>
 					<li><a href="/">Dashboard</a></li>
+					<li><a href="/record">Search the record</a></li>
 					<li><a href="/states">Browse by state</a></li>
 					<li><a href="/years">Browse by year</a></li>
 					<li><a href="/about">Method &amp; caveats</a></li>
@@ -21,7 +22,7 @@
 				<h4>Data</h4>
 				<ul>
 					<li><a href="/data/exam-leaks.json" download>Download JSON</a></li>
-					<li><a href={LINKS.csvRaw} rel="noopener noreferrer" target="_blank">Source CSV ↗</a></li>
+					<li><a href={LINKS.csvRaw}>Source CSV ↗</a></li>
 					<li><a href="/about#schema">Column dictionary</a></li>
 					<li><a href="/sitemap.xml">Sitemap</a></li>
 				</ul>
@@ -31,9 +32,9 @@
 				<h4>Contribute</h4>
 				<ul>
 					<li><a href="/contribute">How to add a leak</a></li>
-					<li><a href={LINKS.newIncident} rel="noopener noreferrer" target="_blank">Submit an incident ↗</a></li>
-					<li><a href={LINKS.correction} rel="noopener noreferrer" target="_blank">Report an error ↗</a></li>
-					<li><a href={LINKS.repo} rel="noopener noreferrer" target="_blank">Source on GitHub ↗</a></li>
+					<li><a href={LINKS.newIncident}>Submit an incident ↗</a></li>
+					<li><a href={LINKS.correction}>Report an error ↗</a></li>
+					<li><a href={LINKS.repo}>Source on GitHub ↗</a></li>
 				</ul>
 			</div>
 
@@ -66,10 +67,10 @@
 			</p>
 			<p>
 				Text and data licensed
-				<a href={`${LINKS.repo}/blob/main/LICENSE-DATA`} rel="noopener noreferrer" target="_blank"
+				<a href={`${LINKS.repo}/blob/main/LICENSE-DATA`}
 					>CC BY 4.0</a
 				>. Source code licensed
-				<a href={`${LINKS.repo}/blob/main/LICENSE`} rel="noopener noreferrer" target="_blank"
+				<a href={`${LINKS.repo}/blob/main/LICENSE`}
 					>GPL-3.0</a
 				>. Linked articles remain the copyright of their publishers.
 			</p>

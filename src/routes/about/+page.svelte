@@ -222,7 +222,7 @@
 					parsed dates with their precision, resolved state slugs, structured actions, permalinks.
 				</li>
 				<li>
-					<a href={LINKS.csvRaw} rel="noopener noreferrer" target="_blank">exam_leaks.csv ↗</a> — the
+					<a href={LINKS.csvRaw}>exam_leaks.csv ↗</a> — the
 					source file itself, served from GitHub so you always get the current revision.
 				</li>
 				<li>
@@ -240,12 +240,12 @@
 			<p>
 				If a row misstates a source, if you can supply a verdict for a pending case, or if an
 				incident is missing entirely,
-				<a href={LINKS.correction} rel="noopener noreferrer" target="_blank">open a correction issue</a>
+				<a href={LINKS.correction}>open a correction issue</a>
 				or edit the CSV directly. Corrections are treated as more valuable than additions.
 			</p>
 			<div class="row" style="margin-top:1.5rem">
 				<a class="btn btn-primary" href="/contribute">How to contribute</a>
-				<a class="btn" href={LINKS.repo} rel="noopener noreferrer" target="_blank">Repository ↗</a>
+				<a class="btn" href={LINKS.repo}>Repository ↗</a>
 			</div>
 		</div>
 	</div>

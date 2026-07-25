@@ -1509,7 +1509,9 @@ select.select {
 	gap: 0.5rem;
 }
 
-.prose a {
+/* Buttons excluded: .prose a would otherwise out-specify .btn-accent and
+   paint red text onto the red button. */
+.prose a:not(.btn) {
 	color: var(--accent);
 	text-decoration: underline;
 }

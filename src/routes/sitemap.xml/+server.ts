@@ -16,6 +16,7 @@ export const GET: RequestHandler = () => {
 
 	const entries: Entry[] = [
 		{ path: '/', lastmod: today, priority: '1.0', changefreq: 'weekly' },
+		{ path: '/record', lastmod: today, priority: '0.9', changefreq: 'weekly' },
 		{ path: '/states', lastmod: today, priority: '0.8', changefreq: 'weekly' },
 		{ path: '/years', lastmod: today, priority: '0.8', changefreq: 'weekly' },
 		{ path: '/about', lastmod: today, priority: '0.7', changefreq: 'monthly' },

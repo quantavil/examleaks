@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { LINKS } from '$lib/site';
 	import ThemeToggle from './ThemeToggle.svelte';
 
 	const NAV = [
 		{ href: '/', label: 'Dashboard', optional: false },
+		{ href: '/record', label: 'Record', optional: false },
 		{ href: '/states', label: 'States', optional: true },
 		{ href: '/about', label: 'Method', optional: true },
 		{ href: '/contribute', label: 'Contribute', optional: false }
@@ -30,13 +30,6 @@
 					aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a
 				>
 			{/each}
-			<a
-				class="navlink is-optional"
-				href={LINKS.repo}
-				rel="noopener noreferrer"
-				target="_blank"
-				title="Source code and dataset on GitHub">GitHub ↗</a
-			>
 			<ThemeToggle />
 		</nav>
 	</div>

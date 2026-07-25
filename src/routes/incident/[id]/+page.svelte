@@ -69,7 +69,7 @@
 		<!-- ------------------------------------------------------ header -->
 		<header class="wrap" style="padding-block:clamp(2rem,5vw,3.5rem) 0;max-width:1000px">
 			<nav class="crumbs micro" aria-label="Breadcrumb">
-				<a href="/">Record</a>
+				<a href="/record">Record</a>
 				<span aria-hidden="true">/</span>
 				{#if incident.primaryStateSlug}
 					<a href="/state/{incident.primaryStateSlug}">{incident.primaryState}</a>
@@ -198,7 +198,7 @@
 					<p class="micro" style="margin-top:.75rem">
 						This entry summarises the linked report. Where the summary and the source disagree, the
 						source wins — and please
-						<a href={LINKS.correction} rel="noopener noreferrer" target="_blank">tell us</a>.
+						<a href={LINKS.correction}>tell us</a>.
 					</p>
 				</section>
 			</div>
@@ -224,7 +224,7 @@
 					</dl>
 					<div class="row" style="margin-top:1rem">
 						<a class="btn btn-sm" href="/data/exam-leaks.json" download>Full dataset</a>
-						<a class="btn btn-sm" href={LINKS.editCsv} rel="noopener noreferrer" target="_blank">
+						<a class="btn btn-sm" href={LINKS.editCsv}>
 							Correct this row
 						</a>
 					</div>

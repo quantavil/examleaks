@@ -23,6 +23,7 @@
 	</p>
 	<div class="row" style="margin-top:2rem;gap:.6rem">
 		<a class="btn btn-primary" href="/">Back to the dashboard</a>
+		<a class="btn" href="/record">Search the record</a>
 		<a class="btn" href="/states">Browse by state</a>
 		<a class="btn" href="/years">Browse by year</a>
 	</div>

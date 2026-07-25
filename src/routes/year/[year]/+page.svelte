@@ -68,7 +68,7 @@
 <main id="main">
 	<header class="wrap" style="padding-block:clamp(2rem,5vw,3.5rem) 0">
 		<nav class="micro" aria-label="Breadcrumb" style="display:flex;gap:.4rem">
-			<a href="/" style="text-decoration:none;color:var(--ink-2)">Record</a>
+			<a href="/" style="text-decoration:none;color:var(--ink-2)">Dashboard</a>
 			<span aria-hidden="true">/</span>
 			<a href="/years" style="text-decoration:none;color:var(--ink-2)">Years</a>
 			<span aria-hidden="true">/</span>

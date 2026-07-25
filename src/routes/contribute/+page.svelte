@@ -39,11 +39,11 @@ shift began; the board cancelled that shift the same evening and police arrested
 			and no submission portal — just a file you can edit in the browser.
 		</p>
 		<div class="row" style="margin-top:1.6rem;gap:.6rem">
-			<a class="btn btn-accent" href={LINKS.newIncident} rel="noopener noreferrer" target="_blank"
+			<a class="btn btn-accent" href={LINKS.newIncident}
 				>Submit an incident</a
 			>
-			<a class="btn" href={LINKS.editCsv} rel="noopener noreferrer" target="_blank">Edit the CSV</a>
-			<a class="btn" href={LINKS.correction} rel="noopener noreferrer" target="_blank">Report an error</a>
+			<a class="btn" href={LINKS.editCsv}>Edit the CSV</a>
+			<a class="btn" href={LINKS.correction}>Report an error</a>
 		</div>
 		<hr class="rule-double" style="margin-top:2rem" />
 	</header>
@@ -59,7 +59,7 @@ shift began; the board cancelled that shift the same evening and police arrested
 						<h3 style="margin:0 0 .35rem">Open an issue — no code needed</h3>
 						<p>
 							Paste the link and whatever you know. Use the
-							<a href={LINKS.newIncident} rel="noopener noreferrer" target="_blank">new incident form</a>
+							<a href={LINKS.newIncident}>new incident form</a>
 							— it asks for the fields in order and someone will transcribe it into the CSV. This is a
 							completely legitimate way to contribute and it is how most rows should arrive.
 						</p>
@@ -71,7 +71,7 @@ shift began; the board cancelled that shift the same evening and police arrested
 					<div>
 						<h3 style="margin:0 0 .35rem">Edit the CSV in GitHub's web editor</h3>
 						<p>
-							<a href={LINKS.editCsv} rel="noopener noreferrer" target="_blank">Click here</a>, add
+							<a href={LINKS.editCsv}>Click here</a>, add
 							your row at the bottom, and GitHub will open a pull request for you. No git, no local
 							setup.
 						</p>
@@ -205,15 +205,15 @@ bun run dev</code></pre>
 			<h2>Reporting a problem with the site itself</h2>
 			<p>
 				Broken charts, a link that 404s, an accessibility failure, a bad translation of a figure —
-				<a href={LINKS.issues} rel="noopener noreferrer" target="_blank">open an issue</a>. The code is
+				<a href={LINKS.issues}>open an issue</a>. The code is
 				GPL-3.0-licensed and the data is CC BY 4.0; fork either freely.
 			</p>
 
 			<div class="row" style="margin-top:2rem;gap:.6rem">
-				<a class="btn btn-accent" href={LINKS.newIncident} rel="noopener noreferrer" target="_blank"
+				<a class="btn btn-accent" href={LINKS.newIncident}
 					>Submit an incident</a
 				>
-				<a class="btn" href={LINKS.contributing} rel="noopener noreferrer" target="_blank"
+				<a class="btn" href={LINKS.contributing}
 					>CONTRIBUTING.md ↗</a
 				>
 				<a class="btn" href="/about">Method &amp; caveats</a>

@@ -95,7 +95,11 @@ src/lib/data/
 src/lib/components/
   ColumnChart / BarChart    hand-rolled SVG, no chart library
 src/routes/
-  /                         dashboard — one filter state drives KPIs, charts and table
+  /                         the story — KPIs, four charts, accountability, deaths.
+                            Filters drive the charts; the selection hands off to…
+  /record                   …the tool — search + filters with the table directly
+                            below. Filters round-trip through the query string, so
+                            /record?place=rajasthan&status=Confirmed is shareable
   /incident/[id]            110 prerendered pages
   /state/[slug]             25
   /year/[year]              21
@@ -111,6 +115,8 @@ src/routes/
 - `linked_deaths` is excluded from every aggregate. See [`/about`](https://examleaks.pages.dev/about#on-deaths) for why summing those four numbers would be arithmetically correct and substantively false.
 - Blank is never rendered as `0`. An empty `arrests` cell means the source did not say.
 - Rows with placeholder dates render as `≈ 2012`, read back from the prose note in the CSV.
+- The narrative and the query tool are **separate pages on purpose**. Bolted together, the search box sat 6,922px above its own results and half the page was a single table.
+- Only source citations open in a new tab — you are mid-research and losing the record would be hostile. GitHub and docs links stay in the same tab; `↗` marks "leaves the site", not "opens a tab".
 
 ### A note on the share cards
 
