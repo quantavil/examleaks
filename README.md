@@ -2,7 +2,7 @@
 
 **An open, source-linked record of documented paper leaks and examination-integrity failures in Indian public examinations, 2004 – present.**
 
-110 incidents. 25 states and territories. 60 examination bodies. Every row links to the report it came from.
+111 incidents. 25 states and territories. 60 examination bodies. Every row links to the report it came from.
 
 🔗 **[examleaks.pages.dev](https://examleaks.pages.dev)** · 📄 [Method & caveats](https://examleaks.pages.dev/about) · ➕ [Contribute](https://examleaks.pages.dev/contribute)
 
@@ -56,7 +56,9 @@ bun run dev        # http://localhost:5173
 | `bun run dev` | Dev server with HMR |
 | `bun run build` | Static build into `build/` |
 | `bun run preview` | Serve the built output |
-| `bun run check` | `svelte-check` — types and a11y |
+| `bun run check` | Validator, then `svelte-check` — types and a11y |
+| `bun run validate` | Validate `exam_leaks.csv` on its own |
+| `bun run validate:links` | Validate, and fetch every source URL. Pre-merge check; needs network |
 
 > **TypeScript is deliberately pinned to `^5.9`.** TypeScript 7 is the native Go rewrite and does not expose the full compiler API (`ts.sys`) that `svelte-check` loads at startup — bumping it makes `bun run check` crash before it reads a single file. Revisit once `svelte-check` ships TS 7 support. Everything else tracks latest: Vite 8 (Rolldown), `vite-plugin-svelte` 7, SvelteKit 2, Svelte 5.
 
@@ -86,9 +88,11 @@ There is no CI workflow in this repo by design — the Pages build is the check.
 
 ```
 exam_leaks.csv              ← the dataset. Everything derives from this.
+scripts/
+  validate-csv.ts           runs inside `vite build`; a malformed row fails the build
 src/lib/data/
   csv.ts                    RFC 4180 parser (no dependencies)
-  normalize.ts              raw row → typed Incident; parses actions, infers date precision
+  normalize.ts              raw row → typed Incident; parses actions, reads declared date precision
   places.ts                 state registry + free-text area → canonical slug
   bodies.ts                 merges renamed bodies (Vyapam ≡ MPPEB ≡ MP ESB)
   stats.ts                  aggregations, all taking a filtered list
@@ -100,7 +104,7 @@ src/routes/
   /record                   …the tool — search + filters with the table directly
                             below. Filters round-trip through the query string, so
                             /record?place=rajasthan&status=Confirmed is shareable
-  /incident/[id]            110 prerendered pages
+  /incident/[id]            111 prerendered pages
   /state/[slug]             25
   /year/[year]              21
   /og/**/*.svg              prerendered share cards
@@ -112,9 +116,9 @@ src/routes/
 
 - `leak_status` is encoded as a **single-hue ordinal ramp** (Confirmed darkest → Suspected lightest) with neutral grey for `Denied`, which sits *outside* the scale rather than at the bottom of it. It is an evidentiary scale, so it looks like one.
 - Charts of different measures never share an axis. Incident counts and candidates-affected are deliberately separate figures.
-- `linked_deaths` is excluded from every aggregate. See [`/about`](https://examleaks.pages.dev/about#on-deaths) for why summing those four numbers would be arithmetically correct and substantively false.
+- `linked_deaths` is excluded from every aggregate and is never summed. See [`/about`](https://examleaks.pages.dev/about#on-deaths) for why adding those figures together would be arithmetically correct and substantively false.
 - Blank is never rendered as `0`. An empty `arrests` cell means the source did not say.
-- Rows with placeholder dates render as `≈ 2012`, read back from the prose note in the CSV.
+- Rows with imprecise dates render as `≈ 2012`, driven by the `date_precision` column. It is declared per row, never inferred from the prose.
 - The narrative and the query tool are **separate pages on purpose**. Bolted together, the search box sat 6,922px above its own results and half the page was a single table.
 - Only source citations open in a new tab — you are mid-research and losing the record would be hostile. GitHub and docs links stay in the same tab; `↗` marks "leaves the site", not "opens a tab".
 

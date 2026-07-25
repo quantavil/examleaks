@@ -30,7 +30,7 @@ bun run dev
 
 **A verdict added to an old row**, not a new row.
 
-Most entries here were sourced from articles written days after the leak. Convictions handed down years later are missing across the board — only 8 of 110 incidents currently carry a conviction count, and that is a limitation of one-source-per-row, not a finding about Indian courts. If you can point to a judgment for a case from 2013 or 2017, that improves the dataset in a way a new 2026 row does not.
+Most entries here were sourced from articles written days after the leak. Convictions handed down years later are missing across the board — only 8 of 111 incidents currently carry a conviction count, and that is a limitation of one-source-per-row, not a finding about Indian courts. If you can point to a judgment for a case from 2013 or 2017, that improves the dataset in a way a new 2026 row does not.
 
 ## Field rules that actually trip people up
 
@@ -52,7 +52,7 @@ Full column dictionary: [`/about#schema`](https://examleaks.pages.dev/about#sche
 One row (wrapped here for readability — a single line in the file):
 
 ```
-PL-0111,2026-08-14,day,NDA (May2014-now),Example State Clerk Recruitment Exam 2026,
+PL-0112,2026-08-14,day,NDA (May2014-now),Example State Clerk Recruitment Exam 2026,
 Example Staff Selection Commission (ESSC),State,Example State (Capital City),Confirmed,
 Exam cancelled + Arrests-FIR,"Question paper circulated on Telegram 40 minutes before the
 shift began; the board cancelled that shift the same evening and police arrested 4.",4,,

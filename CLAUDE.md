@@ -107,7 +107,7 @@ The reasoning is written up at `/about` and in `CONTRIBUTING.md`.
 ```
 /                  the story — KPIs, four charts, accountability, deaths
 /record            the tool — search + filters, table directly below
-/incident/[id]     110 prerendered pages
+/incident/[id]     111 prerendered pages
 /state/[slug]      25    /year/[year]  21    /states  /years
 /about  /contribute
 /og/**/*.svg       prerendered share cards
@@ -144,8 +144,10 @@ analytics, no third-party requests. Charts are hand-rolled SVG in
 ```bash
 bun install
 bun run dev
-bun run build      # → build/
-bun run check      # must be 0 errors AND 0 warnings (types + a11y)
+bun run build          # → build/, runs the validator first
+bun run check          # must be 0 errors AND 0 warnings (validator + types + a11y)
+bun run validate       # the validator on its own
+bun run validate:links # …and fetch every source. Pre-merge only; needs network
 ```
 
 ## Gotchas that have already bitten
