@@ -4,8 +4,8 @@
  *
  * NOTE ON FORMAT: X/Twitter, Facebook and LinkedIn do not rasterise SVG
  * `og:image` values — Discord, Slack and most in-browser previews do. Run
- * `bun run og:png` (see scripts/og-png.mjs) to convert these to PNG if you
- * need full coverage on the big platforms.
+ * `bun run scripts/og-png.mjs` to convert these to PNG if you need full
+ * coverage on the big platforms.
  */
 
 import type { Incident } from './data/types';

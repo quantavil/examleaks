@@ -117,7 +117,6 @@ export function byPlace(list: Incident[]): PlaceBucket[] {
 export interface BodyBucket {
 	key: string;
 	label: string;
-	short: string;
 	total: number;
 	bodyType: 'Central' | 'State';
 	jurisdiction: string;
@@ -134,7 +133,6 @@ export function byBody(list: Incident[]): BodyBucket[] {
 			bucket = {
 				key: incident.bodyKey,
 				label: incident.bodyLabel,
-				short: incident.bodyShort,
 				total: 0,
 				bodyType: incident.bodyType,
 				jurisdiction: '',

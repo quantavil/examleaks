@@ -191,33 +191,20 @@ const slugify = (s: string): string =>
 		.replace(/^-+|-+$/g, '')
 		.slice(0, 60);
 
-const cache = new Map<string, CanonicalBody>();
-
 export function canonicalBody(rawName: string): CanonicalBody {
 	const name = (rawName ?? '').trim();
-	const cached = cache.get(name);
-	if (cached) return cached;
 
-	let result: CanonicalBody;
 	const rule = RULES.find((r) => r.re.test(name));
+	if (rule) return { key: rule.key, label: rule.label, short: rule.short };
 
-	if (rule) {
-		result = { key: rule.key, label: rule.label, short: rule.short };
-	} else {
-		const acronym = extractAcronym(name);
-		if (acronym) {
-			result = { key: slugify(acronym), label: acronym, short: acronym };
-		} else {
-			// Drop any trailing parenthetical and any ", City" suffix.
-			const clean = name.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
-			result = {
-				key: slugify(clean) || 'unknown',
-				label: clean || 'Unknown body',
-				short: clean.length > 26 ? `${clean.slice(0, 24)}…` : clean
-			};
-		}
-	}
+	const acronym = extractAcronym(name);
+	if (acronym) return { key: slugify(acronym), label: acronym, short: acronym };
 
-	cache.set(name, result);
-	return result;
+	// Drop any trailing parenthetical and any ", City" suffix.
+	const clean = name.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
+	return {
+		key: slugify(clean) || 'unknown',
+		label: clean || 'Unknown body',
+		short: clean.length > 26 ? `${clean.slice(0, 24)}…` : clean
+	};
 }
