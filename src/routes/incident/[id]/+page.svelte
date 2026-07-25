@@ -223,7 +223,7 @@
 						</div>
 					</dl>
 					<div class="row" style="margin-top:1rem">
-						<a class="btn btn-sm" href="/data/exam-leaks.csv" download>Full CSV</a>
+						<a class="btn btn-sm" href="/data/exam-leaks.json" download>Full dataset</a>
 						<a class="btn btn-sm" href={LINKS.editCsv} rel="noopener noreferrer" target="_blank">
 							Correct this row
 						</a>

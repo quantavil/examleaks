@@ -4,7 +4,7 @@ import type { ActionKind, EraKey, Incident, LeakStatus } from './types';
 
 export type StatusCounts = Record<LeakStatus, number>;
 
-export const emptyStatusCounts = (): StatusCounts => ({
+const emptyStatusCounts = (): StatusCounts => ({
 	Confirmed: 0,
 	Alleged: 0,
 	Suspected: 0,
@@ -278,8 +278,3 @@ export const topBy = (
 		.sort((a, b) => (pick(b) ?? 0) - (pick(a) ?? 0))
 		.slice(0, n);
 
-export const statusShare = (counts: StatusCounts): { key: LeakStatus; value: number }[] =>
-	STATUS_ORDER.map((key) => ({ key, value: counts[key] }));
-
-export const pct = (part: number, whole: number): number =>
-	whole === 0 ? 0 : (part / whole) * 100;

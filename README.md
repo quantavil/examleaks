@@ -20,10 +20,13 @@ Incidents whose allegations were later *officially rejected* stay in the record,
 
 `exam_leaks.csv` at the repository root is the **single source of truth**. There is no database and no generated copy: the site imports the CSV as raw text at build time and parses it. Edit the CSV, and every page, chart, export and share card updates.
 
-| Endpoint | What |
+| Where | What |
 |---|---|
-| [`/data/exam-leaks.csv`](https://examleaks.pages.dev/data/exam-leaks.csv) | The raw file, verbatim |
-| [`/data/exam-leaks.json`](https://examleaks.pages.dev/data/exam-leaks.json) | Normalised — parsed dates, resolved state slugs, structured actions, permalinks |
+| [`/data/exam-leaks.json`](https://examleaks.pages.dev/data/exam-leaks.json) | The whole record, normalised — parsed dates with their precision, resolved state slugs, structured actions, permalinks |
+| [`exam_leaks.csv`](https://raw.githubusercontent.com/quantavil/examleaks/main/exam_leaks.csv) | The source file itself, from GitHub |
+| The record table | Exports any filtered subset to CSV, in the browser |
+
+The site does not re-serve the CSV — that would just be a second copy of a file GitHub already serves at a canonical URL. JSON is the one artefact the site uniquely produces, so it is the one it hosts.
 
 Column dictionary: [`/about#schema`](https://examleaks.pages.dev/about#schema).
 
@@ -67,12 +70,17 @@ VITE_SITE_URL=https://examleaks.pages.dev bun run build
 
 The build is fully static — `build/` drops onto Cloudflare Pages, GitHub Pages, Netlify, S3 or any file server.
 
-**Cloudflare Pages**, either way:
+**Cloudflare Pages** via the dashboard — connect the repo and set:
 
-- **Git integration** — build command `bun run build`, output directory `build`, and set `VITE_SITE_URL` as an environment variable.
-- **GitHub Actions** — `.github/workflows/deploy.yml` is ready. Add repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, and a repository variable `SITE_URL`.
+| Setting | Value |
+|---|---|
+| Build command | `bun run build` |
+| Output directory | `build` |
+| Environment variable | `VITE_SITE_URL` = your canonical origin, no trailing slash |
 
-`static/_headers` sets caching and security headers; Cloudflare Pages picks it up automatically.
+Every push then rebuilds automatically, which also catches a malformed CSV row before it goes live. `static/_headers` sets caching and security headers; Cloudflare Pages picks it up with no extra config.
+
+There is no CI workflow in this repo by design — the Pages build is the check.
 
 ## Architecture
 

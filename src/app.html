@@ -5,19 +5,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" type="image/svg+xml" />
 		<link rel="mask-icon" href="%sveltekit.assets%/favicon.svg" color="#a4231c" />
-		<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f5f0" />
-		<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d0d0d" />
+		<meta name="theme-color" content="#f7f5f0" />
 		<script>
-			// Stamp the theme before first paint so there is no flash.
+			// Light is the default; dark is opt-in via the toggle. Stamped before
+			// first paint so a returning dark-mode reader sees no flash.
 			(function () {
 				try {
-					var t = localStorage.getItem('examleaks-theme');
-					if (t !== 'light' && t !== 'dark') {
-						t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+					if (localStorage.getItem('examleaks-theme') === 'dark') {
+						document.documentElement.dataset.theme = 'dark';
 					}
-					document.documentElement.dataset.theme = t;
 				} catch (e) {
-					document.documentElement.dataset.theme = 'light';
+					// Storage unavailable — light is already the default.
 				}
 			})();
 		</script>

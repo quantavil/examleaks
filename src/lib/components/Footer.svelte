@@ -20,8 +20,8 @@
 			<div class="footer-col">
 				<h4>Data</h4>
 				<ul>
-					<li><a href="/data/exam-leaks.csv" download>Download CSV</a></li>
 					<li><a href="/data/exam-leaks.json" download>Download JSON</a></li>
+					<li><a href={LINKS.csvRaw} rel="noopener noreferrer" target="_blank">Source CSV ↗</a></li>
 					<li><a href="/about#schema">Column dictionary</a></li>
 					<li><a href="/sitemap.xml">Sitemap</a></li>
 				</ul>

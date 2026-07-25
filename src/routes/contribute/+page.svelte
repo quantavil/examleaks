@@ -21,7 +21,7 @@ shift began; the board cancelled that shift the same evening and police arrested
 		step: [
 			{ '@type': 'HowToStep', name: 'Find a citable source', text: 'A named news report, court order, official notice or RTI reply.' },
 			{ '@type': 'HowToStep', name: 'Add one row to exam_leaks.csv', text: 'Follow the column dictionary. Leave a field blank rather than guessing.' },
-			{ '@type': 'HowToStep', name: 'Open a pull request', text: 'CI rebuilds the site and a maintainer checks the source against the claim.' }
+			{ '@type': 'HowToStep', name: 'Open a pull request', text: 'A preview build validates the CSV and a maintainer checks the source against the claim.' }
 		]
 	};
 </script>
@@ -166,7 +166,10 @@ bun run dev</code></pre>
 
 			<h2>What happens to your pull request</h2>
 			<ol>
-				<li>CI parses the CSV and rebuilds the site — a malformed row fails the build immediately.</li>
+				<li>
+					A preview build parses the CSV and rebuilds the site — a malformed row fails immediately,
+					before anyone reviews it.
+				</li>
 				<li>
 					A maintainer opens your source and checks it says what the row says. Rows are rejected for
 					overstating the source far more often than for anything else.

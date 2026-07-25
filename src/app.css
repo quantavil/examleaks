@@ -59,36 +59,8 @@
 	--prose: 68ch;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root:where(:not([data-theme='light'])) {
-		color-scheme: dark;
-		--paper: #0d0d0d;
-		--paper-alt: #141413;
-		--surface: #1a1a19;
-		--surface-2: #222221;
-		--ink: #f4f3ee;
-		--ink-2: #c3c2b7;
-		--ink-3: #8f8d86;
-		--rule: #2c2c2a;
-		--rule-strong: #45443f;
-		--grid: #2c2c2a;
-		--axis: #383835;
-		--accent: #e8564c;
-		--accent-ink: #17100f;
-		--accent-wash: #2a1614;
-		--st-confirmed: #b7d3f6;
-		--st-alleged: #6da7ec;
-		--st-suspected: #2a78d6;
-		--st-denied: #898781;
-		--cat-1: #3987e5;
-		--cat-2: #d95926;
-		--series-1: #3987e5;
-		--focus: #6da7ec;
-		--shadow-drawer: -18px 0 48px rgba(0, 0, 0, 0.6);
-		--shadow-card: none;
-	}
-}
-
+/* Dark is opt-in via the toggle, never inferred from the OS — the light
+   newsprint plane is the intended reading experience. */
 :root[data-theme='dark'] {
 	color-scheme: dark;
 	--paper: #0d0d0d;
@@ -341,12 +313,6 @@ h4 {
 .rule {
 	border: 0;
 	border-top: 1px solid var(--rule);
-	margin: 0;
-}
-
-.rule-strong {
-	border: 0;
-	border-top: 2px solid var(--ink);
 	margin: 0;
 }
 
@@ -1724,12 +1690,6 @@ select.select {
 
 /* ---------- 17. Utilities --------------------------------------------------- */
 
-.grid-2 {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-	gap: 1.5rem;
-}
-
 .grid-side {
 	display: grid;
 	grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr);
@@ -1756,23 +1716,6 @@ select.select {
 	gap: 1rem;
 	align-items: baseline;
 	justify-content: space-between;
-}
-
-.hide-sm {
-	display: initial;
-}
-
-.show-sm {
-	display: none;
-}
-
-@media (max-width: 860px) {
-	.hide-sm {
-		display: none;
-	}
-	.show-sm {
-		display: initial;
-	}
 }
 
 @media print {

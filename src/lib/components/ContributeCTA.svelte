@@ -37,7 +37,7 @@
 			</div>
 			<div class="cta-step">
 				<span class="n">3</span>
-				<span><b>Open a pull request.</b> CI rebuilds the site; a maintainer checks the source against the claim.</span>
+				<span><b>Open a pull request.</b> A preview build validates the row; a maintainer checks the source against the claim.</span>
 			</div>
 			<div class="cta-step">
 				<span class="n">4</span>

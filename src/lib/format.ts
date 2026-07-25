@@ -105,8 +105,3 @@ export const isApprox = (precision: DatePrecision): boolean => precision !== 'da
 export const pctStr = (part: number, whole: number, digits = 0): string =>
 	whole === 0 ? '0%' : `${((part / whole) * 100).toFixed(digits)}%`;
 
-export const plural = (n: number, one: string, many = `${one}s`): string =>
-	`${n === 1 ? one : many}`;
-
-/** "2 of 110" style copy used across notes and captions. */
-export const ofTotal = (part: number, whole: number): string => `${num(part)} of ${num(whole)}`;

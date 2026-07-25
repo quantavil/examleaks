@@ -15,7 +15,7 @@
 	import type { Incident } from '$lib/data/types';
 	import { applyFilter, emptyFilter, isActive, toggle } from '$lib/filters';
 	import { compact, compactParts, compactShort, fmtDate, num, pctStr } from '$lib/format';
-	import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, abs } from '$lib/site';
+	import { LINKS, SITE_DESCRIPTION, SITE_NAME, SITE_URL, abs } from '$lib/site';
 
 	/* ----------------------------------------------------------- state */
 
@@ -156,14 +156,10 @@
 		distribution: [
 			{
 				'@type': 'DataDownload',
-				encodingFormat: 'text/csv',
-				contentUrl: abs('/data/exam-leaks.csv')
-			},
-			{
-				'@type': 'DataDownload',
 				encodingFormat: 'application/json',
 				contentUrl: abs('/data/exam-leaks.json')
-			}
+			},
+			{ '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: LINKS.csvRaw }
 		]
 	};
 </script>

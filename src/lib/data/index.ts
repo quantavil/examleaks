@@ -19,8 +19,6 @@ export * from './stats';
 export { canonicalBody } from './bodies';
 export { toCsv } from './csv';
 
-export const CSV_TEXT = rawCsv;
-
 export const incidents: Incident[] = normalizeAll(parseCsvRecords(rawCsv));
 
 export const byId: Map<string, Incident> = new Map(incidents.map((i) => [i.id, i]));
@@ -61,8 +59,5 @@ export const incidentsForPlace = (slug: string): Incident[] =>
 
 export const incidentsForYear = (year: number): Incident[] =>
 	incidents.filter((i) => i.year === year);
-
-export const incidentsForBody = (bodyKey: string): Incident[] =>
-	incidents.filter((i) => i.bodyKey === bodyKey);
 
 export { placeBySlug };

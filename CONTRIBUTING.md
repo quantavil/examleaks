@@ -61,7 +61,7 @@ known.",4,,52000,,,The Example Herald,https://example.com/article,High
 
 ## What happens to your pull request
 
-1. CI parses the CSV and rebuilds the site — a malformed row fails the build immediately.
+1. The Cloudflare Pages preview build parses the CSV and rebuilds the site — a malformed row fails immediately, before anyone reviews it.
 2. A maintainer opens your source and checks it says what the row says. **Rows are rejected for overstating the source far more often than for anything else.**
 3. Once merged, your incident gets a permanent page at `/incident/PL-XXXX`, a share card, and a place in every chart and download.
 

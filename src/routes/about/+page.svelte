@@ -217,12 +217,18 @@
 
 			<h2>Get the data</h2>
 			<ul>
-				<li><a href="/data/exam-leaks.csv" download>exam-leaks.csv</a> — the raw file, verbatim.</li>
 				<li>
-					<a href="/data/exam-leaks.json" download>exam-leaks.json</a> — normalised: parsed dates, resolved
-					state slugs, structured actions, permalinks.
+					<a href="/data/exam-leaks.json" download>exam-leaks.json</a> — the whole record, normalised:
+					parsed dates with their precision, resolved state slugs, structured actions, permalinks.
 				</li>
-				<li><a href={LINKS.csvRaw} rel="noopener noreferrer" target="_blank">Raw file on GitHub ↗</a></li>
+				<li>
+					<a href={LINKS.csvRaw} rel="noopener noreferrer" target="_blank">exam_leaks.csv ↗</a> — the
+					source file itself, served from GitHub so you always get the current revision.
+				</li>
+				<li>
+					Any filtered subset of the table exports to CSV in the browser — see the
+					<a href="/">record</a>.
+				</li>
 			</ul>
 			<p>
 				Licensed <strong>CC BY 4.0</strong>. Use it, chart it, publish from it — please credit
