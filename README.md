@@ -2,7 +2,7 @@
 
 **An open, source-linked record of documented paper leaks and examination-integrity failures in Indian public examinations, 2004 – present.**
 
-111 incidents. 25 states and territories. 60 examination bodies. Every row links to the report it came from.
+117 incidents. 26 states and territories. 65 examination bodies. Every row links to the report it came from.
 
 🔗 **[examleaks.pages.dev](https://examleaks.pages.dev)** · 📄 [Method & caveats](https://examleaks.pages.dev/about) · ➕ [Contribute](https://examleaks.pages.dev/contribute)
 
@@ -104,8 +104,8 @@ src/routes/
   /record                   …the tool — search + filters with the table directly
                             below. Filters round-trip through the query string, so
                             /record?place=rajasthan&status=Confirmed is shareable
-  /incident/[id]            111 prerendered pages
-  /state/[slug]             25
+  /incident/[id]            117 prerendered pages
+  /state/[slug]             26
   /year/[year]              21
   /og/**/*.svg              prerendered share cards
 ```

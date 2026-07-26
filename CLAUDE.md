@@ -107,8 +107,8 @@ The reasoning is written up at `/about` and in `CONTRIBUTING.md`.
 ```
 /                  the story — KPIs, four charts, accountability, deaths
 /record            the tool — search + filters, table directly below
-/incident/[id]     111 prerendered pages
-/state/[slug]      25    /year/[year]  21    /states  /years
+/incident/[id]     117 prerendered pages
+/state/[slug]      26    /year/[year]  21    /states  /years
 /about  /contribute
 /og/**/*.svg       prerendered share cards
 /data/exam-leaks.json   normalised export

@@ -30,7 +30,7 @@ bun run dev
 
 **A verdict added to an old row**, not a new row.
 
-Most entries here were sourced from articles written days after the leak. Convictions handed down years later are missing across the board — only 8 of 111 incidents currently carry a conviction count, and that is a limitation of one-source-per-row, not a finding about Indian courts. If you can point to a judgment for a case from 2013 or 2017, that improves the dataset in a way a new 2026 row does not.
+Most entries here were sourced from articles written days after the leak. Convictions handed down years later are missing across the board — only 8 of 117 incidents currently carry a conviction count, and that is a limitation of one-source-per-row, not a finding about Indian courts. If you can point to a judgment for a case from 2013 or 2017, that improves the dataset in a way a new 2026 row does not.
 
 ## Field rules that actually trip people up
 
